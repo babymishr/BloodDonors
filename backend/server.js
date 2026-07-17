@@ -10,6 +10,8 @@ const bloodBankRoutes = require("./routes/bloodBankRoutes");
 const requestRoutes = require("./routes/requestRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const bloodStockRoutes = require("./routes/bloodStockRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+
 
 const app = express();
 
@@ -22,6 +24,7 @@ app.use("/api/bloodbanks", bloodBankRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/bloodstock", bloodStockRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.get("/", (req, res) => {
   res.send("BloodConnect Backend is Running...");
