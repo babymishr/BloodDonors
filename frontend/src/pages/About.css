@@ -1,0 +1,19 @@
+.about {
+  padding: 50px;
+  text-align: center;
+}
+
+.about h1 {
+  color: darkred;
+  margin-bottom: 20px;
+}
+
+.about h2 {
+  margin-top: 30px;
+  color: red;
+}
+
+.about p {
+  font-size: 18px;
+  line-height: 30px;
+}

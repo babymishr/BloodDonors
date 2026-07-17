@@ -1,4 +1,4 @@
-
+import "./Footer.css";
 function Footer() {
   return (
     <footer className="footer">
@@ -23,7 +23,7 @@ function Footer() {
           <p>India</p>
         </div>
       </div>
-
+      
       <hr />
 
       <p className="copyright">

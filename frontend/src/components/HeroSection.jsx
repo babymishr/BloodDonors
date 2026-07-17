@@ -1,26 +1,78 @@
+import blood1 from "../assets/blood1.jpg";
+import blood2 from "../assets/blood2.jpg";
+import blood3 from "../assets/blood3.jpg";
+import blood4 from "../assets/blood4.jpg";
+import blood5 from "../assets/blood5.jpg";
+import "./HeroSection.css";
 function HeroSection() {
   return (
-    <section className="hero-section">
+    <div
+      id="heroCarousel"
+      className="carousel slide"
+      data-bs-ride="carousel"
+    >
 
-      <div className="hero-content">
+      <div className="carousel-inner">
 
-        <h1>Donate Blood, Save Lives</h1>
-
-        <p>
-          BloodDonors is a platform that connects blood donors, patients,
-          hospitals, and blood banks. It helps people find blood quickly
-          during emergencies and makes the donation process easy, fast,
-          and secure.
-        </p>
-
-        <div className="hero-buttons">
-          <button>Become a Donor</button>
-          <button>Request Blood</button>
+        <div className="carousel-item active">
+          <img
+            src={blood5}
+            className="d-block w-100"
+            alt="Blood Donation"
+          />
         </div>
 
+        <div className="carousel-item">
+          <img
+            src={blood2}
+            className="d-block w-100"
+            alt="Blood Donation"
+          />
+        </div>
+
+        <div className="carousel-item">
+          <img
+            src={blood3}
+            className="d-block w-100"
+            alt="Blood Donation"
+          />
+        </div>
+
+         <div className="carousel-item active">
+          <img
+            src={blood1}
+            className="d-block w-100"
+            alt="Blood Donation"
+          />
+        </div>
+          
+         <div className="carousel-item active">
+          <img
+            src={blood4}
+            className="d-block w-100"
+            alt="Blood Donation"
+          />
+        </div>
       </div>
 
-    </section>
+      <button
+        className="carousel-control-prev"
+        type="button"
+        data-bs-target="#heroCarousel"
+        data-bs-slide="prev"
+      >
+        <span className="carousel-control-prev-icon"></span>
+      </button>
+
+      <button
+        className="carousel-control-next"
+        type="button"
+        data-bs-target="#heroCarousel"
+        data-bs-slide="next"
+      >
+        <span className="carousel-control-next-icon"></span>
+      </button>
+    </div>
   );
 }
 

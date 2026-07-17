@@ -1,28 +1,43 @@
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "./Login.css";
+
 function Login() {
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    navigate("/donor-dashboard");
+  };
+
   return (
-    <div className="login-container">
-      <h1>Login</h1>
+    <>
+      <Navbar />
 
-      <form>
-        <label>Email</label>
-        <input
-          type="email"
-          placeholder="Enter your email"
-        />
+      <div className="login-container">
+        <h1>Login</h1>
 
-        <label>Password</label>
-        <input
-          type="password"
-          placeholder="Enter your password"
-        />
+        <form onSubmit={handleLogin}>
+          <label>Email</label>
+          <input type="email" placeholder="Enter your email" required />
 
-        <button type="submit">Login</button>
-      </form>
+          <label>Password</label>
+          <input type="password" placeholder="Enter your password" required />
 
-      <p>
-        Don't have an account? <a href="/register">Register</a>
-      </p>
-    </div>
+          <button type="submit">Login</button>
+        </form>
+
+        <p>
+          Don't have an account?{" "}
+          <span onClick={() => navigate("/register")}>
+            Register
+          </span>
+        </p>
+      </div>
+
+      <Footer />
+    </>
   );
 }
 

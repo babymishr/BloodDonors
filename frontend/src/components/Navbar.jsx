@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
-
+import "./Navbar.css";
 
 function Navbar() {
   return (
-    <nav>
-      <h2>BloodDonors</h2>
+    <nav className="navbar">
+      <div className="logo">
+        <h2>BloodDonors</h2>
+      </div>
 
-      <ul>
+      <ul className="nav-links">
         <li>
           <Link to="/">Home</Link>
         </li>
@@ -15,10 +17,7 @@ function Navbar() {
           <Link to="/about">About</Link>
         </li>
 
-        <li>
-          <Link to="/blood-groups">Blood Groups</Link>
-        </li>
-
+        
         <li>
           <Link to="/contact">Contact</Link>
         </li>
@@ -29,10 +28,6 @@ function Navbar() {
 
         <li>
           <Link to="/register">Register</Link>
-        </li>
-
-        <li>
-          <Link to="/donor-dashboard">Dashboard</Link>
         </li>
       </ul>
     </nav>

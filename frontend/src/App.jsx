@@ -9,6 +9,8 @@ import BloodBankDashboard from "./pages/BloodBankDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 
 function App() {
@@ -16,12 +18,17 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+         <Route path="/register" element={<Register />} />  
+         <Route path="/about" element={<About/>}/>   
+         <Route path="/contact" element={<Contact/>}/>
 
         <Route path="/donor-dashboard" element={<DonorDashboard />} />
         <Route path="/patient-dashboard" element={<PatientDashboard />} />
         <Route path="/hospital-dashboard" element={<HospitalDashboard />} />
         <Route path="/bloodbank-dashboard" element={<BloodBankDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        
 
       </Routes>
     </BrowserRouter>

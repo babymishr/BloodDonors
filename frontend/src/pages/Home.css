@@ -1,5 +1,9 @@
-.Home{
-    width:100%;
-    min-height:100vh;
-    background:hsl(210, 82%, 47%);
+.home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
 }
