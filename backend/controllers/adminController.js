@@ -1,5 +1,33 @@
 const db = require("../config/db");
 
+// ==========================
+// Common Query Handler
+// ==========================
+
+const executeQuery = (
+  res,
+  sql,
+  params,
+  successCallback,
+  errorMessage = "Database Error"
+) => {
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        message: errorMessage,
+        error: err.message,
+      });
+    }
+
+    successCallback(result);
+  });
+};
+
+
+// ==========================
+// Dashboard
+// ==========================
+
 const getDashboard = (req, res) => {
   const sql = `
     SELECT
@@ -10,14 +38,7 @@ const getDashboard = (req, res) => {
       (SELECT COUNT(*) FROM blood_requests) AS totalRequests
   `;
 
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Dashboard",
-        error: err.message,
-      });
-    }
-
+  executeQuery(res, sql, [], (result) => {
     res.status(200).json({
       message: "Admin Dashboard",
       dashboard: result[0],
@@ -25,342 +46,310 @@ const getDashboard = (req, res) => {
   });
 };
 
-const getPendingRequests = (req, res) => {
+
+// ==========================
+// Blood Request Common Function
+// ==========================
+
+const getRequestsByStatus = (status, res) => {
+
   const sql = `
     SELECT * FROM blood_requests
-    WHERE status = 'Pending'
+    WHERE status = ?
   `;
 
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Pending Requests",
-        error: err.message,
-      });
-    }
+  executeQuery(res, sql, [status], (result) => {
 
     res.status(200).json({
-      message: "Pending Requests",
+      message: `${status} Requests`,
       total: result.length,
       requests: result,
     });
+
   });
 };
+
+
+const getPendingRequests = (req, res) => {
+  getRequestsByStatus("Pending", res);
+};
+
 
 const getAcceptedRequests = (req, res) => {
-  const sql = `
-    SELECT * FROM blood_requests
-    WHERE status = 'Accepted'
-  `;
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Accepted Requests",
-        error: err.message,
-      });
-    }
-
-    res.status(200).json({
-      message: "Accepted Requests",
-      total: result.length,
-      requests: result,
-    });
-  });
+  getRequestsByStatus("Accepted", res);
 };
+
 
 const getRejectedRequests = (req, res) => {
-  const sql = `
-    SELECT * FROM blood_requests
-    WHERE status = 'Rejected'
-  `;
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Rejected Requests",
-        error: err.message,
-      });
-    }
-
-    res.status(200).json({
-      message: "Rejected Requests",
-      total: result.length,
-      requests: result,
-    });
-  });
+  getRequestsByStatus("Rejected", res);
 };
+
 
 const getCompletedRequests = (req, res) => {
-  const sql = `
-    SELECT * FROM blood_requests
-    WHERE status = 'Completed'
-  `;
+  getRequestsByStatus("Completed", res);
+};
 
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Completed Requests",
-        error: err.message,
-      });
-    }
+
+// ==========================
+// Common Get Users Function
+// ==========================
+
+const getUsersByTable = (tableName, keyName, message, res) => {
+
+  const sql = `SELECT * FROM ${tableName}`;
+
+  executeQuery(res, sql, [], (result) => {
 
     res.status(200).json({
-      message: "Completed Requests",
+      message: message,
       total: result.length,
-      requests: result,
+      [keyName]: result,
     });
+
   });
+
 };
+
 
 const getAllDonorsAdmin = (req, res) => {
-  const sql = "SELECT * FROM donors";
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Donors",
-        error: err.message,
-      });
-    }
-
-    res.status(200).json({
-      message: "All Donors",
-      total: result.length,
-      donors: result,
-    });
-  });
+  getUsersByTable(
+    "donors",
+    "donors",
+    "All Donors",
+    res
+  );
 };
+
 
 const getAllPatientsAdmin = (req, res) => {
-  const sql = "SELECT * FROM patients";
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Patients",
-        error: err.message,
-      });
-    }
-
-    res.status(200).json({
-      message: "All Patients",
-      total: result.length,
-      patients: result,
-    });
-  });
+  getUsersByTable(
+    "patients",
+    "patients",
+    "All Patients",
+    res
+  );
 };
+
 
 const getAllHospitalsAdmin = (req, res) => {
-  const sql = "SELECT * FROM hospitals";
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Hospitals",
-        error: err.message,
-      });
-    }
-
-    res.status(200).json({
-      message: "All Hospitals",
-      total: result.length,
-      hospitals: result,
-    });
-  });
+  getUsersByTable(
+    "hospitals",
+    "hospitals",
+    "All Hospitals",
+    res
+  );
 };
+
+
 const getAllBloodBanksAdmin = (req, res) => {
-  const sql = "SELECT * FROM blood_banks";
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Fetch Blood Banks",
-        error: err.message,
-      });
-    }
-
-    res.status(200).json({
-      message: "All Blood Banks",
-      total: result.length,
-      bloodBanks: result,
-    });
-  });
-};
-
-const deleteDonorAdmin = (req, res) => {
-  const { id } = req.params;
-
-  const sql = "DELETE FROM donors WHERE donor_id = ?";
-
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Delete Donor",
-        error: err.message,
-      });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Donor Not Found",
-      });
-    }
-
-    res.status(200).json({
-      message: "Donor Deleted Successfully",
-    });
-  });
-};
-
-const deletePatientAdmin = (req, res) => {
-  const { id } = req.params;
-
-  const sql = "DELETE FROM patients WHERE patient_id = ?";
-
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Delete Patient",
-        error: err.message,
-      });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Patient Not Found",
-      });
-    }
-
-    res.status(200).json({
-      message: "Patient Deleted Successfully",
-    });
-  });
-};
-
-const deleteHospitalAdmin = (req, res) => {
-  const { id } = req.params;
-
-  const sql = "DELETE FROM hospitals WHERE hospital_id = ?";
-
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Delete Hospital",
-        error: err.message,
-      });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Hospital Not Found",
-      });
-    }
-
-    res.status(200).json({
-      message: "Hospital Deleted Successfully",
-    });
-  });
-};
-
-const deleteBloodBankAdmin = (req, res) => {
-  const { id } = req.params;
-
-  const sql = "DELETE FROM blood_banks WHERE blood_bank_id = ?";
-
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Delete Blood Bank",
-        error: err.message,
-      });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Blood Bank Not Found",
-      });
-    }
-
-    res.status(200).json({
-      message: "Blood Bank Deleted Successfully",
-    });
-  });
+  getUsersByTable(
+    "blood_banks",
+    "bloodBanks",
+    "All Blood Banks",
+    res
+  );
 };
 
 
-const verifyHospital = (req, res) => {
+
+// ==========================
+// Common Delete Function
+// ==========================
+
+const deleteUserByTable = (
+  tableName,
+  idColumn,
+  name,
+  req,
+  res
+) => {
+
   const { id } = req.params;
+
 
   const sql = `
-    UPDATE hospitals
-    SET is_verified = TRUE
-    WHERE hospital_id = ?
+    DELETE FROM ${tableName}
+    WHERE ${idColumn} = ?
   `;
 
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Verify Hospital",
-        error: err.message,
-      });
-    }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Hospital Not Found",
-      });
-    }
+  executeQuery(
+    res,
+    sql,
+    [id],
+    (result)=>{
 
-    res.status(200).json({
-      message: "Hospital Verified Successfully",
-    });
-  });
+
+      if(result.affectedRows === 0){
+
+        return res.status(404).json({
+          message:`${name} Not Found`,
+        });
+
+      }
+
+
+      res.status(200).json({
+        message:`${name} Deleted Successfully`,
+      });
+
+
+    }
+  );
+
 };
 
-const verifyBloodBank = (req, res) => {
-  const { id } = req.params;
+
+
+const deleteDonorAdmin = (req,res)=>{
+  deleteUserByTable(
+    "donors",
+    "donor_id",
+    "Donor",
+    req,
+    res
+  );
+};
+
+
+const deletePatientAdmin = (req,res)=>{
+  deleteUserByTable(
+    "patients",
+    "patient_id",
+    "Patient",
+    req,
+    res
+  );
+};
+
+
+const deleteHospitalAdmin = (req,res)=>{
+  deleteUserByTable(
+    "hospitals",
+    "hospital_id",
+    "Hospital",
+    req,
+    res
+  );
+};
+
+
+const deleteBloodBankAdmin = (req,res)=>{
+  deleteUserByTable(
+    "blood_banks",
+    "blood_bank_id",
+    "Blood Bank",
+    req,
+    res
+  );
+};
+
+
+
+// ==========================
+// Common Verify Function
+// ==========================
+
+
+const verifyOrganization = (
+  tableName,
+  idColumn,
+  name,
+  req,
+  res
+)=>{
+
+  const {id}=req.params;
+
 
   const sql = `
-    UPDATE blood_banks
+    UPDATE ${tableName}
     SET is_verified = TRUE
-    WHERE blood_bank_id = ?
+    WHERE ${idColumn} = ?
   `;
 
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Failed to Verify Blood Bank",
-        error: err.message,
-      });
-    }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Blood Bank Not Found",
-      });
-    }
+  executeQuery(
+    res,
+    sql,
+    [id],
+    (result)=>{
 
-    res.status(200).json({
-      message: "Blood Bank Verified Successfully",
-    });
-  });
+
+      if(result.affectedRows===0){
+
+        return res.status(404).json({
+          message:`${name} Not Found`,
+        });
+
+      }
+
+
+      res.status(200).json({
+        message:`${name} Verified Successfully`,
+      });
+
+
+    }
+  );
+
+
 };
+
+
+
+const verifyHospital = (req,res)=>{
+
+  verifyOrganization(
+    "hospitals",
+    "hospital_id",
+    "Hospital",
+    req,
+    res
+  );
+
+};
+
+
+
+const verifyBloodBank = (req,res)=>{
+
+  verifyOrganization(
+    "blood_banks",
+    "blood_bank_id",
+    "Blood Bank",
+    req,
+    res
+  );
+
+};
+
+
+
+// ==========================
+// Export
+// ==========================
 
 module.exports = {
+
   getDashboard,
+
   getPendingRequests,
   getAcceptedRequests,
   getRejectedRequests,
   getCompletedRequests,
+
   getAllDonorsAdmin,
   getAllPatientsAdmin,
   getAllHospitalsAdmin,
   getAllBloodBanksAdmin,
+
   deleteDonorAdmin,
   deletePatientAdmin,
   deleteHospitalAdmin,
   deleteBloodBankAdmin,
+
   verifyHospital,
   verifyBloodBank,
+
 };
